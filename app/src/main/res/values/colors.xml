@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="green">#148b6f</color>
+    <color name="blue">#021f3f</color>
+    <color name="opaque_blue">#0D021f3f</color>
+
+
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="md_blue_50">#E3F2FD</color>

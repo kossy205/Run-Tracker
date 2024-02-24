@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.navHostFragment)
         // If using an ActionBar, set up the ActionBar with NavController
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
         binding.bottomNavigationView.setupWithNavController(navController)
 
 
