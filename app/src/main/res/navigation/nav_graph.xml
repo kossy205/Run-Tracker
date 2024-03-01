@@ -4,6 +4,17 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/setUpFragment">
 
+<!--    this is a global action to send user to tracking fragment,
+        which means it can be executed from any
+        where and not just in a fragment.
+        The app:launchSingleTop="true" makes
+        sure we only open one instance of the fragment,
+        so we can have all the data accurately-->
+    <action android:id="@+id/action_global_trackingFragment"
+        app:destination="@+id/trackingFragment"
+        app:launchSingleTop="true"/>
+
+
     <fragment
         android:id="@+id/setUpFragment"
         android:name="com.example.runtracker.ui.fragments.SetUpFragment"
