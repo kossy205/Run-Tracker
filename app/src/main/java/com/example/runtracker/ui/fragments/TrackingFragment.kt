@@ -143,7 +143,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         }
     }
 
-    // this fun animats the map to view on the current point on the map
+    // this fun animates the map to view on the current point on the map
     //"pathPoints.last().last()" signifies current or latest polyline, while "pathPoints.last()" is the latest point in the latest polyline
     private fun moveCameraToUser(){
         if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()){
