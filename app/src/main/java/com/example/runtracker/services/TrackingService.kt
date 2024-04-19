@@ -37,10 +37,12 @@ import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // to draw polyline on map, we need points, this points(latlng) stored in a list is a Polyline.
 // there can be several Polylines on the map because the user can pause the run and resume, which means there would be several Polylines ...
@@ -50,10 +52,20 @@ import kotlinx.coroutines.launch
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
+@AndroidEntryPoint
 class TrackingService: LifecycleService() {
 
     var isFirstRun = true
+
+    @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    @Inject
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
+    //to update notification, we have to post a new notification with same notification ID
+    lateinit var currentNotificationBuilder: NotificationCompat.Builder
+
     private var timeRunInSeconds = MutableLiveData<Long>()
 
     companion object{
@@ -73,10 +85,12 @@ class TrackingService: LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
+            updateNotificationTrackingState(it)
         })
     }
 
@@ -110,6 +124,30 @@ class TrackingService: LifecycleService() {
         isTimerEnabled = false
         timeRunInSeconds.postValue(0L)
         timeRunInMillis.postValue(0L)
+    }
+
+    private fun updateNotificationTrackingState(isTracking: Boolean){
+        val notificationActionText = if (isTracking) "Pause" else "Resume"
+        val pendingIntent = if (isTracking){
+            val pauseIntent = Intent(this, TrackingService::class.java).apply {
+                action = ACTION_PAUSE_SERVICE
+            }
+            PendingIntent.getService(this, 1, pauseIntent, FLAG_UPDATE_CURRENT)
+        }else{
+            val resumeIntent = Intent(this, TrackingService::class.java).apply {
+                action = ACTION_START_OR_RESUME_SERVICE
+            }
+            PendingIntent.getService(this, 2, resumeIntent, FLAG_UPDATE_CURRENT)
+        }
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply {
+            isAccessible = true
+            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+        currentNotificationBuilder = baseNotificationBuilder
+            .addAction(R.drawable.ic_pause_black_24dp, notificationActionText, pendingIntent)
+        notificationManager.notify(NOTIFICATION_ID, currentNotificationBuilder.build())
     }
 
     @SuppressLint("MissingPermission")
@@ -173,33 +211,14 @@ class TrackingService: LifecycleService() {
             createNotificationChannel(notificationManager)
         }
 
-        val notificatioBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_directions_run_black_24dp)
-            .setContentTitle("Run Tracker")
-            .setContentText("00:00:00")
-            .setContentIntent(getMainActivityPendingIntent())
+        startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
 
-        startForeground(NOTIFICATION_ID, notificatioBuilder.build())
+        timeRunInSeconds.observe(this, Observer {
+            val notification = currentNotificationBuilder
+                .setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000L))
+            notificationManager.notify(NOTIFICATION_ID, notification.build())
+        })
     }
-
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainActivity::class.java).also {
-            it.action = ACTION_SHOW_TRACKING_FRAGMENT
-        },
-        FLAG_UPDATE_CURRENT
-
-    // this function would take a user to main activity when the notification is clicked.
-    // but the main activity shows the run fragment and not the tracking fragment that we want to see.
-    // this is because all these fragments are in the main activity and the run fragment is the default fragment to show.
-    //what we would do is to go to main activity and check if its gets an intent with this action "ACTION_SHOW_TRACKING_FRAGMENT", ...
-    //...it should tk us to the tracking fragment.
-    // mind you we dont have any code or function to tk us to the tracking fragment in our navigation graph. se we would do that, ...
-    //... and then ask mainactivity to tk us to tracking fragment if we get an intent with the specified action "ACTION_SHOW_TRACKING_FRAGMENT"
-    )
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager){
@@ -225,13 +244,15 @@ class TrackingService: LifecycleService() {
         timeStarted = System.currentTimeMillis()
         isTimerEnabled = true
         CoroutineScope(Dispatchers.Main).launch {
-            while (isTracking.value!!){
+            while (isTracking.value == true){
                 //time difference between now and time started
                 laptime = System.currentTimeMillis() - timeStarted
+                val currentTimeRun = timeRunInMillis.value ?: 0
                 //post the new lapTime
                 timeRunInMillis.postValue(timeRun + laptime)
-                if (timeRunInMillis.value!! >= lastSecondTimeStamp + 1000L){
-                    timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
+                if (currentTimeRun >= lastSecondTimeStamp + 1000L){
+                    val currentSeconds = timeRunInSeconds.value ?: 0
+                    timeRunInSeconds.postValue(currentSeconds + 1)
                     lastSecondTimeStamp += 1000L
                 }
                 delay(TIMER_UPDATE_INTERVAL)
