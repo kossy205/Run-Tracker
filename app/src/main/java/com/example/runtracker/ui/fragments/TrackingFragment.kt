@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.runtracker.R
+import com.example.runtracker.adapters.RunAdapter
 import com.example.runtracker.databinding.FragmentRunBinding
 import com.example.runtracker.databinding.FragmentTrackingBinding
 import com.example.runtracker.db.Run
@@ -292,4 +293,5 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         sendCommandToService(ACTION_STOP_SERVICE)
         findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
+
 }

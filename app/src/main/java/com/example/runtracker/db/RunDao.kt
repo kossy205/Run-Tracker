@@ -17,10 +17,10 @@ interface RunDao {
     suspend fun deleteRun(run: Run)
 
     // this is not executed in a coroutine because the function returns livedata which is also asynchronous
-    @Query("SELECT * FROM running_table ORDER BY runDateAndTime DESC")
+    @Query("SELECT * FROM running_table ORDER BY timestamp DESC")
     fun getAllRunSortedByDate(): LiveData<List<Run>>
 
-    @Query("SELECT * FROM running_table ORDER BY runDuration DESC")
+    @Query("SELECT * FROM running_table ORDER BY timeInMillis DESC")
     fun getAllRunSortedByRunDuration(): LiveData<List<Run>>
 
     @Query("SELECT * FROM running_table ORDER BY caloriesBurnt DESC")
@@ -32,7 +32,7 @@ interface RunDao {
     @Query("SELECT * FROM running_table ORDER BY distanceCoveredMeters DESC")
     fun getAllRunSortedByDistance(): LiveData<List<Run>>
 
-    @Query("SELECT SUM(runDuration) FROM running_table")
+    @Query("SELECT SUM(timeInMillis) FROM running_table")
     fun getTotalRunDuration(): LiveData<Long>
 
     @Query("SELECT SUM(caloriesBurnt) FROM running_table")
