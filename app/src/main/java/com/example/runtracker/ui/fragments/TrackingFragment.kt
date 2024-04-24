@@ -37,6 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import java.util.zip.Inflater
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -54,7 +55,10 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     private var pathPoints = mutableListOf<Polyline>()
     private var currentTimeInMillis = 0L
     private var menu: Menu? = null
-    private var weight = 80f
+
+    //this way the weight gets what the user inputed
+    @set:Inject
+    var weight = 80f
 
 
 
