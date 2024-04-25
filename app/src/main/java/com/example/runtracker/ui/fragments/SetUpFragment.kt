@@ -1,5 +1,6 @@
 package com.example.runtracker.ui.fragments
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +11,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.runtracker.R
 import com.example.runtracker.databinding.FragmentSetupBinding
+import com.example.runtracker.others.Constants
 import com.example.runtracker.others.Constants.KEY_FIRST_TIME_TOGGLE
 import com.example.runtracker.others.Constants.KEY_NAME
 import com.example.runtracker.others.Constants.KEY_WEIGHT
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SetUpFragment: Fragment(R.layout.fragment_setup) {
 
     private lateinit var binding: FragmentSetupBinding
