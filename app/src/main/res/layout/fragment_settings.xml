@@ -113,7 +113,7 @@
 
 
         <Button
-            android:id="@+id/btnContinue"
+            android:id="@+id/btnApplyChanges"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="25dp"
