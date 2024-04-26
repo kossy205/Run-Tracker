@@ -152,8 +152,10 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         })
     }
 
+
+
     private fun toggleRun() {
-        if(isTracking) {
+        if(isTracking){
             menu?.getItem(0)?.isVisible = true
             sendCommandToService(ACTION_PAUSE_SERVICE)
         } else {
