@@ -47,6 +47,7 @@ class StatisticsFragment: Fragment(R.layout.fragment_statistics) {
         setupBarChart()
     }
 
+    //
     private fun subscribeToObservers() {
         viewModelStatistics.totalTimeRun.observe(viewLifecycleOwner, Observer {
             it?.let {
