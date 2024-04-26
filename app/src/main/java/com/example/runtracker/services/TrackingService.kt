@@ -80,6 +80,8 @@ class TrackingService: LifecycleService() {
     private fun postInitialValues(){
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        timeRunInSeconds.postValue(0L)
+        timeRunInMillis.postValue(0L)
     }
 
     override fun onCreate() {
@@ -122,8 +124,6 @@ class TrackingService: LifecycleService() {
     private fun pauseService(){
         isTracking.postValue(false)
         isTimerEnabled = false
-        timeRunInSeconds.postValue(0L)
-        timeRunInMillis.postValue(0L)
     }
 
     private fun updateNotificationTrackingState(isTracking: Boolean){
@@ -248,15 +248,13 @@ class TrackingService: LifecycleService() {
         timeStarted = System.currentTimeMillis()
         isTimerEnabled = true
         CoroutineScope(Dispatchers.Main).launch {
-            while (isTracking.value == true){
-                //time difference between now and time started
+            while (isTracking.value!!) {
+                // time difference between now and timeStarted
                 laptime = System.currentTimeMillis() - timeStarted
-                val currentTimeRun = timeRunInMillis.value ?: 0
-                //post the new lapTime
+                // post the new lapTime
                 timeRunInMillis.postValue(timeRun + laptime)
-                if (currentTimeRun >= lastSecondTimeStamp + 1000L){
-                    val currentSeconds = timeRunInSeconds.value ?: 0
-                    timeRunInSeconds.postValue(currentSeconds + 1)
+                if (timeRunInMillis.value!! >= lastSecondTimeStamp + 1000L) {
+                    timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimeStamp += 1000L
                 }
                 delay(TIMER_UPDATE_INTERVAL)
