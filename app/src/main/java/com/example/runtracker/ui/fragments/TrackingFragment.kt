@@ -14,8 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.runtracker.R
-import com.example.runtracker.adapters.RunAdapter
-import com.example.runtracker.databinding.FragmentRunBinding
 import com.example.runtracker.databinding.FragmentTrackingBinding
 import com.example.runtracker.db.Run
 import com.example.runtracker.others.Constants.ACTION_PAUSE_SERVICE
@@ -36,7 +34,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
-import java.util.zip.Inflater
 import javax.inject.Inject
 import kotlin.math.round
 
@@ -166,12 +163,14 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     private fun updateTracking(isTracking: Boolean){
         this.isTracking = isTracking
         if(!isTracking){
-            binding.btnToggleRun.text = "Start"
+            //binding.btnToggleRun.text = "Start"
+            binding.btnToggleRun.setImageResource(R.drawable.ic_play)
             //the below btn is used to save the run
             binding.btnFinishRun.visibility = View.VISIBLE
         }else{
             menu?.getItem(0)?.isVisible = true
-            binding.btnToggleRun.text = "Stop"
+            //binding.btnToggleRun.text = "Stop"
+            binding.btnToggleRun.setImageResource(R.drawable.ic_pause)
             //the below btn is used to save the run
             binding.btnFinishRun.visibility = View.GONE
         }

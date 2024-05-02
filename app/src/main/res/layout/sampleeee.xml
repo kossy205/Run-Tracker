@@ -1,94 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Welcome!\nPlease enter your name and weight."
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/tilName"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Your Name"
-            android:inputType="textPersonName" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/tilName"
-        app:layout_constraintTop_toBottomOf="@+id/tilName">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Your Weight"
-            android:ems="10"
-            android:inputType="numberDecimal" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/tvWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="kg"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tilWeight"
-        app:layout_constraintLeft_toRightOf="@id/tilWeight"
-        app:layout_constraintTop_toTopOf="@+id/tilWeight" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/clInnerLayout"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/md_blue_900"
-        android:padding="8dp"
+        android:layout_height="0dp"
+        android:background="@color/md_blue_800"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapView">
 
-        <TextView
-            android:id="@+id/tvContinue"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Continue"
-            android:textColor="@color/colorAccent"
-            android:textSize="24sp"
+            android:text="00:00:00:00"
+            android:textSize="50sp"
+            app:layout_constraintBottom_toTopOf="@+id/btnToggleRun"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnToggleRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnFinishRun"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinishRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Finish Run"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnToggleRun"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvLetsGo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Let's go, USERNAME!"
+        android:textAlignment="center"
+        android:textSize="50sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/clInnerLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/clInnerLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
