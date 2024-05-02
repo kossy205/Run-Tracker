@@ -3,6 +3,7 @@ package com.example.runtracker.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.runtracker.R
@@ -24,6 +26,7 @@ import com.example.runtracker.others.Constants.POLYLINE_COLOR
 import com.example.runtracker.others.Constants.POLYLINE_WIDTH
 import com.example.runtracker.others.TrackingUtility
 import com.example.runtracker.services.Polyline
+import com.example.runtracker.services.Polylines
 import com.example.runtracker.services.TrackingService
 import com.example.runtracker.ui.viewmodels.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -33,6 +36,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.math.round
@@ -141,6 +145,9 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
+            getCurrentCaloriesBurned(it)
+
+            Timber.d("obServedPathPoints: $it")
         })
         TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer{
             currentTimeInMillis = it
@@ -149,6 +156,19 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         })
     }
 
+    private fun getCurrentCaloriesBurned(pathPoint: MutableList<Polyline>){
+        var currentDistanceInMeters = 0
+        var currentCaloriesBurned = 0
+        for (polyline in pathPoint){
+            currentDistanceInMeters += TrackingUtility.calculatePolylineLength(polyline).toInt()
+            currentCaloriesBurned = ((currentDistanceInMeters / 1000f) * weight).toInt()
+            Timber.d("currentDistanceInMeters: $currentDistanceInMeters")
+
+            binding.tvCaloriesValue.text = currentCaloriesBurned.toString()
+            Timber.d("currentCaloriesBurned: $currentCaloriesBurned")
+        }
+
+    }
 
 
     private fun toggleRun() {
