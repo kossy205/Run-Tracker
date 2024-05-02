@@ -24,4 +24,11 @@
     <style name="MyBottomNavigationTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
     </style>
+
+
+    <style name="ShapeAppearance.MaterialComponents.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+
+        <!-- Add other attributes to customize your FAB -->
+    </style>
+
 </resources>
