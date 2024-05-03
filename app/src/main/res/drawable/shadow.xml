@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow Layer -->
+    <item android:top="-2dp" android:right="-2dp" android:left="-2dp">
+        <shape android:shape="rectangle">
+            <solid /> <!-- Transparent color for non-shadow parts -->
+            <corners android:radius="12dp"/>
+            <gradient
+                android:startColor="#30000000"
+                android:endColor="#50000000"
+                android:angle="270"/>
+        </shape>
+    </item>
+    <!-- Content Layer -->
+    <item android:top="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white"/> <!-- Background color of the layout -->
+            <corners android:radius="12dp"/>
+        </shape>
+    </item>
+</layer-list>
+
