@@ -43,6 +43,7 @@
         app:rippleColor="@android:color/white"
         android:layout_marginEnd="52dp"
         android:layout_marginBottom="5dp"
+        android:visibility="gone"
         app:shapeAppearance="@style/ShapeAppearance.MaterialComponents.FloatingActionButton"
         app:layout_constraintBottom_toTopOf="@+id/btnToggleRun"
         app:layout_constraintEnd_toEndOf="parent"
