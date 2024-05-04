@@ -8,6 +8,7 @@ import com.example.runtracker.others.SortType
 import com.example.runtracker.repositories.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +16,7 @@ class MainViewModel @Inject constructor(
     val mainRepository: MainRepository
 ): ViewModel() {
 
-    private val runsSortedByDate = mainRepository.getAllRunSortedByDate()
+    private var runsSortedByDate = mainRepository.getAllRunSortedByDate()
     private val runsSortedByRunDuration = mainRepository.getAllRunSortedByRunDuration()
     private val runsSortedByCaloriesBurnt = mainRepository.getAllRunSortedByCaloriesBurnt()
     private val runsSortedByAvgSpeedKMH = mainRepository.getAllRunSortedByAvgSpeedKMH()
@@ -62,7 +63,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun sortRuns(sortType: SortType) = when(sortType){
-        SortType.DATE -> runsSortedByDate.value?.let { runs.value = it }
+        SortType.DATE -> runsSortedByDate.value?.let { runs.value = it
+            Timber.d("list of runs sorted by date: ${it[2].id}")}
         SortType.RUNNING_TIME -> runsSortedByRunDuration.value?.let { runs.value = it }
         SortType.DISTANCE -> runsSortedByDistance.value?.let { runs.value = it }
         SortType.CALORIES_BURNED -> runsSortedByCaloriesBurnt.value?.let { runs.value = it }

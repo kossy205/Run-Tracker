@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         // If using an ActionBar, set up the ActionBar with NavController
         //setSupportActionBar(findViewById(R.id.toolbar))
         binding.bottomNavigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setOnItemReselectedListener { /* NO-OPERATION */ }
 
 
         navController.addOnDestinationChangedListener {_, destination, _ ->
