@@ -77,4 +77,9 @@ class MainViewModel @Inject constructor(
         mainRepository.insertRun(run)
     }
 
+    fun deleteRun(run: Run) = viewModelScope.launch {
+        mainRepository.deleteRun(run)
+        Timber.d("run has been deleted")
+    }
+
 }

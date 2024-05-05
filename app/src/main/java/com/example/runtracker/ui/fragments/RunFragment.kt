@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.runtracker.R
 import com.example.runtracker.adapters.RunAdapter
@@ -21,9 +23,11 @@ import com.example.runtracker.others.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.runtracker.others.SortType
 import com.example.runtracker.others.TrackingUtility
 import com.example.runtracker.ui.viewmodels.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import timber.log.Timber
 
 @AndroidEntryPoint
 class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionCallbacks {
@@ -48,6 +52,7 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Timber.d("view created")
         requestPermissions()
         setUpRecyclerView()
 
@@ -79,20 +84,45 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
 
         }
 
-        viewModelMain.runs.observe(viewLifecycleOwner, Observer {
-            runAdapter.submitList(it)
-
-        })
+        observeRun()
+        Timber.d("list observed 1")
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
         }
     }
 
+    private fun observeRun(){
+        viewModelMain.runs.observe(viewLifecycleOwner, Observer {
+            runAdapter.submitList(it)
+        })
+    }
+
     private fun setUpRecyclerView() = binding.rvRuns.apply {
         runAdapter = RunAdapter()
         adapter = runAdapter
         layoutManager = LinearLayoutManager(requireContext())
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false // We don't want move functionality in this case.
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val runToDelete = runAdapter.differ.currentList[position]
+                viewModelMain.deleteRun(runToDelete)
+
+                Snackbar.make(binding.rvRuns, "Run deleted", Snackbar.LENGTH_LONG).apply {
+                    setAction("UNDO") {
+                        viewModelMain.insert(runToDelete) // a method to re-insert a deleted run
+                    }
+                    show()
+                }
+            }
+        }
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(binding.rvRuns)
+
     }
 
     // request permission
@@ -123,7 +153,6 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
         }
     }
 
-
     // this takes care of permissions denied permanently(denied twice) and permissions denied but not yet permanent (denied once)
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
@@ -136,10 +165,8 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
         }
     }
 
-
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
