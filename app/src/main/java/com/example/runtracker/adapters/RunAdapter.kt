@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.runtracker.databinding.ItemRunBinding
 import com.example.runtracker.db.Run
 import com.example.runtracker.others.TrackingUtility
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -55,6 +57,8 @@ class RunAdapter: RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
 
     }
 
+//    var onDeleteGesture: ((Run) -> Unit)? = null
+//    var undoDelete: ((Run) -> Unit)? = null
 
 
     // used to check between two lists old and new and update only content and items that has changed...
